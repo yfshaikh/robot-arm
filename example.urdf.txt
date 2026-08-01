@@ -1,0 +1,46 @@
+<?xml version="1.0">
+<robot name="my_robot">
+<!-- links are rigid paths of the robot -->
+<!-- joints are the articulation between the links -->
+   
+    <material name="grey">
+        <color rgba="0.5 0.5 0.5 1" />
+    </material>
+
+
+    <material name="blue">
+        <color rgba="0 0 0.5 1" />
+    </material>
+
+
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <!-- use either custom mesh or basic shapes -->
+                <box size="0.4 0.4 0.1" /> xyz
+            </geometry>
+            <origin xyz="0 0 0.05" rpy="0 0 0" />
+            <material name="grey" />
+        </visual>
+    </link>
+    <!-- to add a link with a joint, follow 5 step process -->
+    <!-- 1. add another link with origin of 0 -->
+    <link name="shoulder_link">
+        <visual>
+            <geometry>
+                <cylinder length="0.5" radius="0.1" />
+            </geometry>
+            <origin xyz="0 0 0.25" rpy="0 0 0"> // offset so that the shoulder visual is on top of its tf axes (we get 0.25 since its hald of 0.5 - the height of the full shoulder visual) (step 5)
+            <material name="blue" />
+        </visual>
+    </link>
+    <!-- 2. add joint tag -->
+    <joint name="joint1" type="revolute"> // revolute means we can rotate with a minimum and maximum
+        <!-- create a relationship -->
+        <parent link="base_link" />
+        <child link="shoulder_link" />
+        <origin xyz="0 0 0.1" rpy="0 0 0" /> // offset by 0.1 on z so that the shoulder tf is on top of the base (step 3) [do this by hiding the visual/robot body and only looking at the tf; we got the 0.1 by looking at the height of the base link]
+        <axis xyz="0 0 1" /> // need to specify which ones are axis of rotation (1 = we can revolve around this axis) [step 4: put the correct axis to rotate]
+        <limit effort="1000.0" velocity="1.0" lower="-3.14" upper="3.14" /> // we want to be able to rotate from -pi to +-pi
+    </joint>
+</robot>
